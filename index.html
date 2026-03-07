@@ -76,7 +76,31 @@ alert("Tombol berhasil diklik");
 
 }
 
-</script>
+<script>
 
-</body>
-</html>
+function savePatient(){
+
+var data = {
+MRN: document.getElementById("mrn").value,
+Name: document.getElementById("name").value,
+Date_of_Birth: document.getElementById("dob").value,
+Gender: document.getElementById("gender").value,
+Address: document.getElementById("address").value,
+Phone: document.getElementById("phone").value
+};
+
+fetch("https://script.google.com/macros/s/AKfycbxSL5_82AE7u7yK-czTIP5NRvW1-_USr9V454oHQI8B62PyEDodvD1ERZ2Ew85KXeye/exec",{
+method:"POST",
+body:new URLSearchParams(data)
+})
+.then(res=>res.text())
+.then(res=>{
+alert("Patient saved!");
+})
+.catch(err=>{
+alert("Error saving data");
+});
+
+}
+
+</script>
