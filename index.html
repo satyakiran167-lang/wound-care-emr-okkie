@@ -5,7 +5,42 @@
 <title>Wound Care EMR</title>
 
 <style>
+<script>
 
+function savePatient(){
+
+alert("Button clicked");
+
+const API_URL="https://script.google.com/macros/s/AKfycbym1BEI8_KE-UpvfXJWxf-xZ61_WhNAPcoCcQGlUVV7IIybdGYbSjWQq80jfhK6D8dR/exec";
+
+const data={
+MRN:document.getElementById("mrn").value,
+Name:document.getElementById("name").value,
+Date_of_Birth:document.getElementById("dob").value,
+Gender:document.getElementById("gender").value,
+Address:document.getElementById("address").value,
+Phone:document.getElementById("phone").value
+};
+
+fetch(API_URL,{
+method:"POST",
+headers:{
+"Content-Type":"text/plain"
+},
+body:JSON.stringify(data)
+})
+.then(res=>res.text())
+.then(res=>{
+alert("Patient Saved");
+})
+.catch(err=>{
+alert("Error");
+});
+
+}
+
+</script>
+  
 body{
 font-family:Arial;
 margin:0;
@@ -338,3 +373,4 @@ alert("Error sending data");
 }
 
 </script>
+
