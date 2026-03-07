@@ -177,7 +177,7 @@ display:none;
 <input id="phone" placeholder="Phone">
 
 <button class="btn" onclick="savePatient()">Save Patient</button>
-
+  
 </div>
 
 <div class="card">
@@ -307,45 +307,29 @@ display:none;
 
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbym1BEI8_KE-UpvfXJWxf-xZ61_WhNAPcoCcQGlUVV7IIybdGYbSjWQq80jfhK6D8dR/exec";
-
-function showPage(page){
-
-var pages=document.getElementsByClassName("page");
-
-for(var i=0;i<pages.length;i++){
-pages[i].style.display="none";
-}
-
-document.getElementById(page).style.display="block";
-
-}
-
-showPage("dashboard");
-
-
+const API_URL="https://script.google.com/macros/s/AKfycbym1BEI8_KE-UpvfXJWxf-xZ61_WhNAPcoCcQGlUVV7IIybdGYbSjWQq80jfhK6D8dR/exec";
 
 function savePatient(){
 
-const data = {
-MRN: document.getElementById("mrn").value,
-Name: document.getElementById("name").value,
-Date_of_Birth: document.getElementById("dob").value,
-Gender: document.getElementById("gender").value,
-Address: document.getElementById("address").value,
-Phone: document.getElementById("phone").value
+const data={
+MRN:document.getElementById("mrn").value,
+Name:document.getElementById("name").value,
+Date_of_Birth:document.getElementById("dob").value,
+Gender:document.getElementById("gender").value,
+Address:document.getElementById("address").value,
+Phone:document.getElementById("phone").value
 };
 
 fetch(API_URL,{
 method:"POST",
 headers:{
-"Content-Type":"text/plain;charset=utf-8"
+"Content-Type":"text/plain"
 },
 body:JSON.stringify(data)
 })
 .then(res=>res.text())
 .then(res=>{
-alert("Patient saved");
+alert("Patient Saved");
 })
 .catch(err=>{
 alert("Error sending data");
@@ -353,20 +337,4 @@ alert("Error sending data");
 
 }
 
-
-function clearForm(){
-
-document.getElementById("mrn").value="";
-document.getElementById("name").value="";
-document.getElementById("dob").value="";
-document.getElementById("gender").value="";
-document.getElementById("address").value="";
-document.getElementById("phone").value="";
-
-}
-
 </script>
-
-</body>
-</html>
-
