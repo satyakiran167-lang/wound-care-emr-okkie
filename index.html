@@ -51,51 +51,29 @@ background:#2f5d8a;
 
 <h2>Add Patient</h2>
 
-<input id="mrn" placeholder="MRN">
-<input id="name" placeholder="Patient Name">
-<input id="dob" type="date">
+<form action="https://script.google.com/macros/s/AKfycbxSL5_82AE7u7yK-czTIP5NRvW1-_USr9V454oHQI8B62PyEDodvD1ERZ2Ew85KXeye/exec" method="POST">
 
-<select id="gender">
+<input name="MRN" placeholder="MRN" required>
+
+<input name="Name" placeholder="Patient Name" required>
+
+<input name="Date_of_Birth" type="date" required>
+
+<select name="Gender" required>
 <option value="">Gender</option>
 <option>Male</option>
 <option>Female</option>
 </select>
 
-<input id="address" placeholder="Address">
-<input id="phone" placeholder="Phone">
+<input name="Address" placeholder="Address">
 
-<button onclick="savePatient()">Save Patient</button>
+<input name="Phone" placeholder="Phone">
+
+<button type="submit">Save Patient</button>
+
+</form>
 
 </div>
-
-<script>
-
-function savePatient(){
-
-var data = {
-MRN: document.getElementById("mrn").value,
-Name: document.getElementById("name").value,
-Date_of_Birth: document.getElementById("dob").value,
-Gender: document.getElementById("gender").value,
-Address: document.getElementById("address").value,
-Phone: document.getElementById("phone").value
-};
-
-fetch("https://script.google.com/macros/s/AKfycbxSL5_82AE7u7yK-czTIP5NRvW1-_USr9V454oHQI8B62PyEDodvD1ERZ2Ew85KXeye/exec",{
-method:"POST",
-body:new URLSearchParams(data)
-})
-.then(response => response.text())
-.then(result => {
-alert("Patient saved!");
-})
-.catch(error => {
-alert("Error saving data");
-});
-
-}
-
-</script>
 
 </body>
 </html>
