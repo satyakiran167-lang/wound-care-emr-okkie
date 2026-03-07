@@ -7,20 +7,18 @@
 <style>
 
 body{
-font-family:Segoe UI, Arial;
+font-family:Segoe UI;
 margin:0;
 background:#f5f7fb;
 }
-
-/* NAVBAR */
 
 .navbar{
 background:#1f3a5f;
 color:white;
 display:flex;
 justify-content:space-between;
+padding:15px 30px;
 align-items:center;
-padding:12px 30px;
 }
 
 .brand{
@@ -38,25 +36,13 @@ font-size:12px;
 opacity:0.8;
 }
 
-.menu{
-display:flex;
-gap:18px;
-flex-wrap:wrap;
-}
-
 .menu button{
 background:none;
 border:none;
 color:white;
+margin-left:15px;
 cursor:pointer;
-font-size:14px;
 }
-
-.menu button:hover{
-text-decoration:underline;
-}
-
-/* CONTENT */
 
 .container{
 padding:30px;
@@ -66,48 +52,36 @@ padding:30px;
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:20px;
-margin-bottom:20px;
 }
 
 .card{
 background:white;
 padding:25px;
 border-radius:10px;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
 .stat{
 text-align:center;
 }
 
-.stat h2{
-margin:0;
-font-size:30px;
-}
-
 .page{
 display:none;
 }
 
-input,select,textarea{
+input,select{
 width:100%;
 padding:8px;
-margin-bottom:12px;
-border-radius:6px;
-border:1px solid #ccc;
+margin-bottom:10px;
 }
 
-.btn{
+button{
 background:#1f3a5f;
 color:white;
 border:none;
-padding:10px 15px;
-border-radius:6px;
+padding:10px;
+border-radius:5px;
 cursor:pointer;
-}
-
-.btn:hover{
-background:#2f5d8a;
 }
 
 table{
@@ -119,28 +93,6 @@ th,td{
 border-bottom:1px solid #ddd;
 padding:10px;
 text-align:left;
-}
-
-.chart{
-height:250px;
-background:#eef3fb;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:8px;
-}
-
-.timeline-item{
-border-left:3px solid #1f3a5f;
-padding-left:10px;
-margin-bottom:10px;
-}
-
-.report-box{
-background:#f2f6ff;
-padding:20px;
-border-radius:8px;
-margin-top:15px;
 }
 
 </style>
@@ -165,8 +117,6 @@ margin-top:15px;
 <button onclick="showPage('reminder')">Reminder</button>
 <button onclick="showPage('billing')">Billing</button>
 <button onclick="showPage('report')">Report</button>
-<button onclick="showPage('inventory')">Inventory</button>
-<button onclick="showPage('education')">Education</button>
 
 </div>
 
@@ -200,126 +150,33 @@ margin-top:15px;
 
 </div>
 
-<div class="card">
-
-<h3>Recent Activities</h3>
-
-<p>Ahmad - Wound assessment</p>
-<p>Siti - Dressing change</p>
-<p>Budi - Follow up visit</p>
-
-</div>
-
 </div>
 
 
-<!-- PATIENT DATABASE -->
+<!-- PATIENTS -->
 
 <div id="patients" class="page">
 
 <div class="card">
 
-<h2>Patient Database</h2>
+<h2>Add Patient</h2>
 
-<input placeholder="Search patient">
+<input id="mrn" placeholder="MRN">
 
-<table>
+<input id="name" placeholder="Name">
 
-<tr>
-<th>MRN</th>
-<th>Name</th>
-<th>Age</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
+<input id="dob" placeholder="Date of Birth">
 
-<tr>
-<td>001</td>
-<td>Ahmad</td>
-<td>60</td>
-<td>Active wound</td>
-<td><button class="btn" onclick="showPage('profile')">Open</button></td>
-</tr>
+<select id="gender">
+<option>Male</option>
+<option>Female</option>
+</select>
 
-</table>
+<input id="address" placeholder="Address">
 
-</div>
+<input id="phone" placeholder="Phone">
 
-</div>
-
-
-<!-- PATIENT PROFILE -->
-
-<div id="profile" class="page">
-
-<h2>Patient Profile</h2>
-
-<div class="grid">
-
-<div class="card">
-
-<h3>Patient Info</h3>
-
-<p>Name : Ahmad</p>
-<p>MRN : 001</p>
-<p>Age : 60</p>
-
-</div>
-
-<div class="card">
-
-<h3>Wound Progress Graph</h3>
-
-<div class="chart">
-Graph Placeholder
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>Visit History</h3>
-
-<table>
-
-<tr>
-<th>Date</th>
-<th>Procedure</th>
-<th>Score</th>
-</tr>
-
-<tr>
-<td>1 Mar</td>
-<td>Dressing</td>
-<td>15</td>
-</tr>
-
-<tr>
-<td>8 Mar</td>
-<td>Dressing</td>
-<td>12</td>
-</tr>
-
-</table>
-
-</div>
-
-<div class="card">
-
-<h3>Generate Patient Report</h3>
-
-<div class="report-box">
-
-<p><b>Patient :</b> Ahmad</p>
-<p><b>Total Visits :</b> 5</p>
-<p><b>Latest Score :</b> 12</p>
-<p><b>Progress :</b> Improving</p>
-
-<button class="btn">Export Patient Report</button>
-
-</div>
+<button onclick="savePatient()">Save Patient</button>
 
 </div>
 
@@ -334,31 +191,27 @@ Graph Placeholder
 
 <h2>Wound Assessment</h2>
 
-<label>MRN</label>
-<input>
+<input placeholder="MRN">
 
-<label>Wound Size</label>
 <select>
-<option>1</option>
-<option>2</option>
-<option>3</option>
+<option>Wound Size 1</option>
+<option>Wound Size 2</option>
+<option>Wound Size 3</option>
 </select>
 
-<label>Exudate</label>
 <select>
-<option>1</option>
-<option>2</option>
-<option>3</option>
+<option>Exudate 1</option>
+<option>Exudate 2</option>
+<option>Exudate 3</option>
 </select>
 
-<label>Tissue</label>
 <select>
-<option>1</option>
-<option>2</option>
-<option>3</option>
+<option>Tissue 1</option>
+<option>Tissue 2</option>
+<option>Tissue 3</option>
 </select>
 
-<button class="btn">Save Assessment</button>
+<button>Save Assessment</button>
 
 </div>
 
@@ -373,17 +226,9 @@ Graph Placeholder
 
 <h2>Patient Timeline</h2>
 
-<div class="timeline-item">
-1 Mar - Dressing Change
-</div>
-
-<div class="timeline-item">
-8 Mar - Wound Assessment
-</div>
-
-<div class="timeline-item">
-15 Mar - Follow Up Visit
-</div>
+<p>1 Mar - Dressing Change</p>
+<p>8 Mar - Assessment</p>
+<p>15 Mar - Follow Up</p>
 
 </div>
 
@@ -398,27 +243,8 @@ Graph Placeholder
 
 <h2>Dressing Reminder</h2>
 
-<table>
-
-<tr>
-<th>Patient</th>
-<th>Date</th>
-<th>Action</th>
-</tr>
-
-<tr>
-<td>Ahmad</td>
-<td>20 Mar</td>
-<td>Dressing Change</td>
-</tr>
-
-<tr>
-<td>Siti</td>
-<td>22 Mar</td>
-<td>Follow Up</td>
-</tr>
-
-</table>
+<p>Ahmad - 20 Mar</p>
+<p>Siti - 22 Mar</p>
 
 </div>
 
@@ -431,12 +257,7 @@ Graph Placeholder
 
 <div class="card">
 
-<h2>Billing / Kasir</h2>
-
-<label>Patient MRN</label>
-<input>
-
-<label>Procedure</label>
+<h2>Billing</h2>
 
 <select>
 <option>Dressing</option>
@@ -444,41 +265,16 @@ Graph Placeholder
 <option>Consultation</option>
 </select>
 
-<label>Price</label>
-<input value="150000">
+<input placeholder="Price">
 
-<button class="btn">Add to Bill</button>
-
-</div>
-
-<div class="card">
-
-<h3>Invoice</h3>
-
-<table>
-
-<tr>
-<th>Procedure</th>
-<th>Price</th>
-</tr>
-
-<tr>
-<td>Dressing</td>
-<td>150000</td>
-</tr>
-
-</table>
-
-<h3>Total : 150000</h3>
-
-<button class="btn">Print Invoice</button>
+<button>Add Billing</button>
 
 </div>
 
 </div>
 
 
-<!-- REPORT UMUM -->
+<!-- REPORT -->
 
 <div id="report" class="page">
 
@@ -488,64 +284,13 @@ Graph Placeholder
 
 <p>Total Patients : 120</p>
 <p>Total Visits : 340</p>
-<p>Healing Rate : 78%</p>
-
-<button class="btn">Export PDF</button>
-
-</div>
-
-</div>
-
-
-<!-- INVENTORY -->
-
-<div id="inventory" class="page">
-
-<div class="card">
-
-<h2>Dressing Inventory</h2>
-
-<table>
-
-<tr>
-<th>Item</th>
-<th>Stock</th>
-</tr>
-
-<tr>
-<td>Hydrocolloid</td>
-<td>25</td>
-</tr>
-
-<tr>
-<td>Alginate</td>
-<td>18</td>
-</tr>
-
-</table>
-
-</div>
-
-</div>
-
-
-<!-- EDUCATION -->
-
-<div id="education" class="page">
-
-<div class="card">
-
-<h2>Patient Education</h2>
-
-<p>• How to clean wound dressing</p>
-<p>• Infection warning signs</p>
-<p>• Home wound care guide</p>
 
 </div>
 
 </div>
 
 </div>
+
 
 
 <script>
@@ -555,7 +300,9 @@ function showPage(page){
 var pages=document.getElementsByClassName("page");
 
 for(var i=0;i<pages.length;i++){
+
 pages[i].style.display="none";
+
 }
 
 document.getElementById(page).style.display="block";
@@ -564,9 +311,46 @@ document.getElementById(page).style.display="block";
 
 showPage('dashboard');
 
+
+
+const API_URL = "https://script.google.com/macros/s/AKfycbwPLXw5mW9d-cd8JL-Le-UAeAsFTCEChkrBq817IGGgDOTWzfIZiB0G6OVeeS1mzRh1/exec";
+
+function savePatient(){
+
+const data = {
+
+MRN:document.getElementById("mrn").value,
+
+Name:document.getElementById("name").value,
+
+Date_of_Birth:document.getElementById("dob").value,
+
+Gender:document.getElementById("gender").value,
+
+Address:document.getElementById("address").value,
+
+Phone:document.getElementById("phone").value
+
+};
+
+fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify(data)
+
+})
+
+.then(res=>res.text())
+
+.then(msg=>alert("Saved : "+msg))
+
+.catch(err=>alert("Error : "+err));
+
+}
+
 </script>
 
 </body>
-</html>
-```
 
+</html>
