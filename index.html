@@ -307,8 +307,7 @@ display:none;
 
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwPLXw5mW9d-cd8JL-Le-UAeAsFTCEChkrBq817IGGgDOTWzfIZiB0G6OVeeS1mzRh1/exec";
-
+const API_URL = "https://script.google.com/macros/s/AKfycbym1BEI8_KE-UpvfXJWxf-xZ61_WhNAPcoCcQGlUVV7IIybdGYbSjWQq80jfhK6D8dR/exec";
 
 function showPage(page){
 
@@ -328,26 +327,28 @@ showPage("dashboard");
 
 function savePatient(){
 
-var data={
-MRN:document.getElementById("mrn").value,
-Name:document.getElementById("name").value,
-Date_of_Birth:document.getElementById("dob").value,
-Gender:document.getElementById("gender").value,
-Address:document.getElementById("address").value,
-Phone:document.getElementById("phone").value
+const data = {
+MRN: document.getElementById("mrn").value,
+Name: document.getElementById("name").value,
+Date_of_Birth: document.getElementById("dob").value,
+Gender: document.getElementById("gender").value,
+Address: document.getElementById("address").value,
+Phone: document.getElementById("phone").value
 };
 
 fetch(API_URL,{
 method:"POST",
+headers:{
+"Content-Type":"text/plain;charset=utf-8"
+},
 body:JSON.stringify(data)
 })
 .then(res=>res.text())
 .then(res=>{
-alert("Patient Saved");
-clearForm();
+alert("Patient saved");
 })
 .catch(err=>{
-alert("Error saving patient");
+alert("Error sending data");
 });
 
 }
@@ -368,3 +369,4 @@ document.getElementById("phone").value="";
 
 </body>
 </html>
+
