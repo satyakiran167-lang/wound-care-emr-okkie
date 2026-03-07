@@ -123,23 +123,23 @@ display:block;
 
 <h2>Add Patient</h2>
 
-<form action="https://script.google.com/macros/s/AKfycbxSL5_82AE7u7yK-czTIP5NRvW1-_USr9V454oHQI8B62PyEDodvD1ERZ2Ew85KXeye/exec" method="POST">
+<form id="patientForm">
 
-<input name="MRN" placeholder="MRN" required>
+<input id="mrn" placeholder="MRN" required>
 
-<input name="Name" placeholder="Patient Name" required>
+<input id="name" placeholder="Patient Name" required>
 
-<input name="Date_of_Birth" type="date" required>
+<input id="dob" type="date" required>
 
-<select name="Gender" required>
+<select id="gender" required>
 <option value="">Gender</option>
 <option>Male</option>
 <option>Female</option>
 </select>
 
-<input name="Address" placeholder="Address">
+<input id="address" placeholder="Address">
 
-<input name="Phone" placeholder="Phone">
+<input id="phone" placeholder="Phone">
 
 <button type="submit">Save Patient</button>
 
@@ -160,6 +160,7 @@ display:block;
 <th>Name</th>
 <th>Date of Birth</th>
 <th>Gender</th>
+<th>Address</th>
 <th>Phone</th>
 </tr>
 </thead>
@@ -177,6 +178,9 @@ display:block;
 
 <script>
 
+const API_URL = "https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9norBOzvE8etwGkhfIjvcuaHtuGLGjMOrdaFFuhEQ/exec";
+
+
 function showSection(id){
 
 document.querySelectorAll(".section")
@@ -187,11 +191,14 @@ document.getElementById(id).classList.add("active");
 }
 
 
-fetch("https://script.google.com/macros/s/AKfycbxSL5_82AE7u7yK-czTIP5NRvW1-_USr9V454oHQI8B62PyEDodvD1ERZ2Ew85KXeye/exec")
+function loadPatients(){
+
+fetch(API_URL)
 .then(res => res.json())
 .then(data => {
 
 let table = document.querySelector("#patientTable tbody");
+table.innerHTML="";
 
 data.slice(1).forEach(row => {
 
@@ -210,9 +217,49 @@ table.appendChild(tr);
 
 });
 
-document.getElementById("totalPatients").innerText = data.length - 1;
+document.getElementById("totalPatients").innerText = data.length-1;
 
 });
+
+}
+
+
+document
+.getElementById("patientForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+var data = {
+MRN: document.getElementById("mrn").value,
+Name: document.getElementById("name").value,
+Date_of_Birth: document.getElementById("dob").value,
+Gender: document.getElementById("gender").value,
+Address: document.getElementById("address").value,
+Phone: document.getElementById("phone").value
+};
+
+fetch(API_URL,{
+method:"POST",
+body:new URLSearchParams(data)
+})
+.then(res=>res.text())
+.then(res=>{
+
+alert("Patient saved");
+
+document.getElementById("patientForm").reset();
+
+loadPatients();
+
+showSection("patients");
+
+});
+
+});
+
+
+loadPatients();
 
 </script>
 
