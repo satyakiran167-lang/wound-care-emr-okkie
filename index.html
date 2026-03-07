@@ -41,8 +41,8 @@ font-size:16px;
 button:hover{
 background:#2f5d8a;
 }
-
 </style>
+
 </head>
 
 <body>
@@ -72,14 +72,6 @@ background:#2f5d8a;
 
 function savePatient(){
 
-alert("Tombol berhasil diklik");
-
-}
-
-<script>
-
-function savePatient(){
-
 var data = {
 MRN: document.getElementById("mrn").value,
 Name: document.getElementById("name").value,
@@ -93,14 +85,17 @@ fetch("https://script.google.com/macros/s/AKfycbxSL5_82AE7u7yK-czTIP5NRvW1-_USr9
 method:"POST",
 body:new URLSearchParams(data)
 })
-.then(res=>res.text())
-.then(res=>{
+.then(response => response.text())
+.then(result => {
 alert("Patient saved!");
 })
-.catch(err=>{
+.catch(error => {
 alert("Error saving data");
 });
 
 }
 
 </script>
+
+</body>
+</html>
