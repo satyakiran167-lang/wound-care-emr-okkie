@@ -5,6 +5,7 @@
 <title>Wound Care EMR</title>
 
 <style>
+
 body{
 font-family:Arial;
 margin:0;
@@ -55,6 +56,11 @@ border-radius:5px;
 cursor:pointer;
 }
 
+button:disabled{
+background:#999;
+cursor:not-allowed;
+}
+
 button:hover{
 background:#2f5d8a;
 }
@@ -77,12 +83,21 @@ display:none;
 .active{
 display:block;
 }
+
+.status{
+margin-top:10px;
+color:#1f3a5f;
+font-size:14px;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="navbar">
+
 <div>
 <b>Wound Care EMR</b><br>
 <small>Ns. Oki Hartono, S.Tr.Kep., CCWC</small>
@@ -92,19 +107,25 @@ display:block;
 <a onclick="showSection('dashboard')">Dashboard</a>
 <a onclick="showSection('patients')">Patients</a>
 </div>
+
 </div>
 
 <div class="container">
 
 <!-- DASHBOARD -->
+
 <div id="dashboard" class="section active">
+
 <div class="card">
 <h2>Dashboard</h2>
 <p>Total Patients: <span id="totalPatients">0</span></p>
 </div>
+
 </div>
 
-<!-- PATIENTS -->
+
+<!-- PATIENT PAGE -->
+
 <div id="patients" class="section">
 
 <div class="card">
@@ -112,6 +133,7 @@ display:block;
 <h2>Add Patient</h2>
 
 <input id="Name" placeholder="Patient Name">
+
 <input id="Date_of_Birth" type="date">
 
 <select id="Gender">
@@ -121,17 +143,22 @@ display:block;
 </select>
 
 <input id="Address" placeholder="Address">
+
 <input id="Phone" placeholder="Phone">
 
-<button onclick="savePatient()">Save Patient</button>
+<button id="saveBtn" onclick="savePatient()">Save Patient</button>
+
+<div class="status" id="statusMsg"></div>
 
 </div>
+
 
 <div class="card">
 
 <h2>Patient Database</h2>
 
 <table id="patientTable">
+
 <thead>
 <tr>
 <th>MRN</th>
@@ -142,7 +169,9 @@ display:block;
 <th>Phone</th>
 </tr>
 </thead>
+
 <tbody></tbody>
+
 </table>
 
 </div>
@@ -155,12 +184,14 @@ display:block;
 
 const API_URL="https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9norBOzvE8etwGkhfIjvcuaHtuGLGjMOrdaFFuhEQ/exec";
 
+
 function showSection(id){
 document.querySelectorAll(".section").forEach(sec=>{
 sec.classList.remove("active");
 });
 document.getElementById(id).classList.add("active");
 }
+
 
 function loadPatients(){
 
@@ -191,16 +222,32 @@ document.getElementById("totalPatients").innerText=data.length-1;
 
 }
 
+
+function generateMRN(total){
+
+let number=total;
+
+return "GV"+number.toString().padStart(3,'0');
+
+}
+
+
 function savePatient(){
+
+let btn=document.getElementById("saveBtn");
+let status=document.getElementById("statusMsg");
+
+btn.disabled=true;
+status.innerText="Saving patient data...";
 
 fetch(API_URL)
 .then(res=>res.json())
 .then(data=>{
 
-let nextMRN=data.length;
+let mrn=generateMRN(data.length);
 
-var patient={
-MRN:nextMRN,
+let patient={
+MRN:mrn,
 Name:document.getElementById("Name").value,
 Date_of_Birth:document.getElementById("Date_of_Birth").value,
 Gender:document.getElementById("Gender").value,
@@ -215,13 +262,15 @@ body:new URLSearchParams(patient)
 .then(res=>res.text())
 .then(()=>{
 
-alert("Patient saved");
+status.innerText="Patient saved successfully";
 
 document.getElementById("Name").value="";
 document.getElementById("Date_of_Birth").value="";
 document.getElementById("Gender").value="";
 document.getElementById("Address").value="";
 document.getElementById("Phone").value="";
+
+btn.disabled=false;
 
 loadPatients();
 
@@ -230,6 +279,7 @@ loadPatients();
 });
 
 }
+
 
 loadPatients();
 
