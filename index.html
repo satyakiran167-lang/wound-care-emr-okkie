@@ -107,13 +107,10 @@ display:block;
 
 <div class="card">
 <h2>Dashboard</h2>
-
 <p>Total Patients: <span id="totalPatients">0</span></p>
-
 </div>
 
 </div>
-
 
 <!-- PATIENT PAGE -->
 
@@ -125,21 +122,21 @@ display:block;
 
 <form id="patientForm">
 
-<input id="mrn" placeholder="MRN" required>
+<input id="MRN" placeholder="MRN" required>
 
-<input id="name" placeholder="Patient Name" required>
+<input id="Name" placeholder="Patient Name" required>
 
-<input id="dob" type="date" required>
+<input id="Date_of_Birth" type="date" required>
 
-<select id="gender" required>
+<select id="Gender" required>
 <option value="">Gender</option>
 <option>Male</option>
 <option>Female</option>
 </select>
 
-<input id="address" placeholder="Address">
+<input id="Address" placeholder="Address">
 
-<input id="phone" placeholder="Phone">
+<input id="Phone" placeholder="Phone">
 
 <button type="submit">Save Patient</button>
 
@@ -180,63 +177,53 @@ display:block;
 
 const API_URL = "https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9norBOzvE8etwGkhfIjvcuaHtuGLGjMOrdaFFuhEQ/exec";
 
-
 function showSection(id){
-
-document.querySelectorAll(".section")
-.forEach(section => section.classList.remove("active"));
-
+document.querySelectorAll(".section").forEach(section=>{
+section.classList.remove("active");
+});
 document.getElementById(id).classList.add("active");
-
 }
-
 
 function loadPatients(){
 
 fetch(API_URL)
-.then(res => res.json())
-.then(data => {
+.then(res=>res.json())
+.then(data=>{
 
-let table = document.querySelector("#patientTable tbody");
+let table=document.querySelector("#patientTable tbody");
 table.innerHTML="";
 
-data.slice(1).forEach(row => {
+data.slice(1).forEach(row=>{
 
-let tr = document.createElement("tr");
+let tr=document.createElement("tr");
 
-row.forEach(cell => {
-
-let td = document.createElement("td");
-td.innerText = cell;
-
+row.forEach(cell=>{
+let td=document.createElement("td");
+td.innerText=cell;
 tr.appendChild(td);
-
 });
 
 table.appendChild(tr);
 
 });
 
-document.getElementById("totalPatients").innerText = data.length-1;
+document.getElementById("totalPatients").innerText=data.length-1;
 
 });
 
 }
 
-
-document
-.getElementById("patientForm")
-.addEventListener("submit",function(e){
+document.getElementById("patientForm").addEventListener("submit",function(e){
 
 e.preventDefault();
 
-var data = {
-MRN: document.getElementById("mrn").value,
-Name: document.getElementById("name").value,
-Date_of_Birth: document.getElementById("dob").value,
-Gender: document.getElementById("gender").value,
-Address: document.getElementById("address").value,
-Phone: document.getElementById("phone").value
+var data={
+MRN:document.getElementById("MRN").value,
+Name:document.getElementById("Name").value,
+Date_of_Birth:document.getElementById("Date_of_Birth").value,
+Gender:document.getElementById("Gender").value,
+Address:document.getElementById("Address").value,
+Phone:document.getElementById("Phone").value
 };
 
 fetch(API_URL,{
@@ -244,9 +231,9 @@ method:"POST",
 body:new URLSearchParams(data)
 })
 .then(res=>res.text())
-.then(res=>{
+.then(()=>{
 
-alert("Patient saved");
+alert("Patient Saved");
 
 document.getElementById("patientForm").reset();
 
@@ -257,7 +244,6 @@ showSection("patients");
 });
 
 });
-
 
 loadPatients();
 
