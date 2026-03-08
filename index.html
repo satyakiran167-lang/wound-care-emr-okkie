@@ -1,202 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Wound Care EMR</title>
-
-<style>
-
-body{
-font-family:Arial;
-margin:0;
-background:#f4f6fa;
-}
-
-.navbar{
-background:#1f3a5f;
-color:white;
-padding:15px 30px;
-display:flex;
-justify-content:space-between;
-}
-
-.menu a{
-color:white;
-margin-left:20px;
-cursor:pointer;
-text-decoration:none;
-}
-
-.container{
-padding:30px;
-}
-
-.card{
-background:white;
-padding:25px;
-border-radius:8px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-margin-bottom:25px;
-}
-
-input,select{
-width:100%;
-padding:10px;
-margin:6px 0;
-border:1px solid #ccc;
-border-radius:5px;
-}
-
-button{
-background:#1f3a5f;
-color:white;
-border:none;
-padding:10px 15px;
-border-radius:5px;
-cursor:pointer;
-}
-
-button:disabled{
-background:#999;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid #ddd;
-text-align:left;
-}
-
-.section{
-display:none;
-}
-
-.active{
-display:block;
-}
-
-.status{
-margin-top:10px;
-font-size:14px;
-color:#1f3a5f;
-}
-
-.loader{
-display:none;
-margin-top:10px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="navbar">
-
-<div>
-<b>Wound Care EMR</b><br>
-<small>Ns. Oki Hartono, S.Tr.Kep., CCWC</small>
-</div>
-
-<div class="menu">
-<a onclick="showSection('dashboard')">Dashboard</a>
-<a onclick="showSection('patients')">Patients</a>
-</div>
-
-</div>
-
-<div class="container">
-
-<!-- DASHBOARD -->
-
-<div id="dashboard" class="section active">
-
-<div class="card">
-<h2>Dashboard</h2>
-<p>Total Patients: <span id="totalPatients">0</span></p>
-</div>
-
-</div>
-
-<!-- PATIENT PAGE -->
-
-<div id="patients" class="section">
-
-<div class="card">
-
-<h2>Add Patient</h2>
-
-<input id="Name" placeholder="Patient Name">
-
-<input id="Date_of_Birth" type="date">
-
-<select id="Gender">
-<option value="">Gender</option>
-<option>Male</option>
-<option>Female</option>
-</select>
-
-<input id="Address" placeholder="Address">
-
-<input id="Phone" placeholder="Phone">
-
-<button id="saveBtn" onclick="savePatient()">Save Patient</button>
-
-<div class="loader" id="loader">Saving patient data...</div>
-
-<div class="status" id="statusMsg"></div>
-
-</div>
-
-<div class="card">
-
-<h2>Patient Database</h2>
-
-<table id="patientTable">
-
-<thead>
-<tr>
-<th>MRN</th>
-<th>Name</th>
-<th>Date of Birth</th>
-<th>Gender</th>
-<th>Address</th>
-<th>Phone</th>
-</tr>
-</thead>
-
-<tbody></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-
 <script>
 
 const API_URL="https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9norBOzvE8etwGkhfIjvcuaHtuGLGjMOrdaFFuhEQ/exec";
 
+let isSaving=false;
+
+
 
 function showSection(id){
+
 document.querySelectorAll(".section").forEach(sec=>{
 sec.classList.remove("active");
 });
+
 document.getElementById(id).classList.add("active");
+
+loadPatients();
+
 }
 
 
 
 function generateMRN(total){
 
-let number = total;
+let number=total;
 
 return "GV"+number.toString().padStart(3,'0');
 
@@ -211,6 +37,9 @@ fetch(API_URL)
 .then(data=>{
 
 let table=document.querySelector("#patientTable tbody");
+
+if(!table) return;
+
 table.innerHTML="";
 
 data.slice(1).forEach(row=>{
@@ -218,9 +47,12 @@ data.slice(1).forEach(row=>{
 let tr=document.createElement("tr");
 
 row.forEach(cell=>{
+
 let td=document.createElement("td");
 td.innerText=cell;
+
 tr.appendChild(td);
+
 });
 
 table.appendChild(tr);
@@ -235,7 +67,23 @@ document.getElementById("totalPatients").innerText=data.length-1;
 
 
 
+function resetForm(){
+
+document.getElementById("Name").value="";
+document.getElementById("Date_of_Birth").value="";
+document.getElementById("Gender").value="";
+document.getElementById("Address").value="";
+document.getElementById("Phone").value="";
+
+}
+
+
+
 function savePatient(){
+
+if(isSaving) return;
+
+isSaving=true;
 
 let btn=document.getElementById("saveBtn");
 let loader=document.getElementById("loader");
@@ -243,7 +91,8 @@ let status=document.getElementById("statusMsg");
 
 btn.disabled=true;
 loader.style.display="block";
-status.innerText="";
+status.innerText="Saving patient data...";
+
 
 fetch(API_URL)
 .then(res=>res.json())
@@ -252,13 +101,19 @@ fetch(API_URL)
 let mrn=generateMRN(data.length);
 
 let patient={
+
 MRN:mrn,
 Name:document.getElementById("Name").value,
 Date_of_Birth:document.getElementById("Date_of_Birth").value,
 Gender:document.getElementById("Gender").value,
 Address:document.getElementById("Address").value,
 Phone:document.getElementById("Phone").value
+
 };
+
+
+resetForm();
+
 
 fetch(API_URL,{
 method:"POST",
@@ -268,15 +123,12 @@ body:new URLSearchParams(patient)
 .then(()=>{
 
 loader.style.display="none";
+
 status.innerText="Patient saved successfully";
 
-document.getElementById("Name").value="";
-document.getElementById("Date_of_Birth").value="";
-document.getElementById("Gender").value="";
-document.getElementById("Address").value="";
-document.getElementById("Phone").value="";
-
 btn.disabled=false;
+
+isSaving=false;
 
 loadPatients();
 
@@ -287,9 +139,11 @@ loadPatients();
 }
 
 
+
+window.onload=function(){
+
 loadPatients();
 
-</script>
+}
 
-</body>
-</html>
+</script>
