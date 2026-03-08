@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta charset="UTF-8">
 <title>Wound Care EMR</title>
@@ -80,13 +79,18 @@ display:none;
 display:block;
 }
 
+#loading{
+color:#1f3a5f;
+font-size:14px;
+margin-top:8px;
+}
+
 </style>
 
 </head>
 
 
 <body>
-
 
 <div class="navbar">
 
@@ -119,7 +123,7 @@ display:block;
 
 
 
-<!-- PATIENT PAGE -->
+<!-- PATIENTS -->
 
 <div id="patients" class="section">
 
@@ -127,7 +131,7 @@ display:block;
 
 <h2>Add Patient</h2>
 
-<form id="patientForm" onsubmit="event.preventDefault(); savePatient();">
+<form id="patientForm">
 
 <input id="Name" placeholder="Patient Name" required>
 
@@ -145,7 +149,7 @@ display:block;
 
 <button id="saveBtn" type="submit">Save Patient</button>
 
-<div id="statusMsg"></div>
+<div id="loading"></div>
 
 </form>
 
@@ -180,7 +184,6 @@ display:block;
 </div>
 
 
-
 <script>
 
 const API_URL="https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9norBOzvE8etwGkhfIjvcuaHtuGLGjMOrdaFFuhEQ/exec";
@@ -197,15 +200,13 @@ sec.classList.remove("active");
 
 document.getElementById(id).classList.add("active");
 
-loadPatients();
-
 }
 
 
 
 function generateMRN(total){
 
-let number = total + 1;
+let number = total+1;
 
 return "GV"+number.toString().padStart(3,"0");
 
@@ -231,6 +232,7 @@ row.forEach(cell=>{
 
 let td=document.createElement("td");
 td.innerText=cell;
+
 tr.appendChild(td);
 
 });
@@ -241,38 +243,25 @@ table.appendChild(tr);
 
 document.getElementById("totalPatients").innerText=data.length-1;
 
-})
-.catch(err=>{
-
-console.log("Error loading data",err);
-
 });
 
 }
 
 
 
-function resetForm(){
+document.getElementById("patientForm").addEventListener("submit",function(e){
 
-document.getElementById("patientForm").reset();
-
-}
-
-
-
-function savePatient(){
+e.preventDefault();
 
 if(saving) return;
 
 saving=true;
 
 let btn=document.getElementById("saveBtn");
-let status=document.getElementById("statusMsg");
+let loading=document.getElementById("loading");
 
 btn.disabled=true;
-
-status.innerText="Saving patient data...";
-
+loading.innerText="Saving patient data...";
 
 fetch(API_URL)
 .then(res=>res.json())
@@ -299,13 +288,13 @@ body:new URLSearchParams(patient)
 .then(res=>res.text())
 .then(()=>{
 
-status.innerText="Patient saved successfully";
+document.getElementById("patientForm").reset();
+
+loading.innerText="Patient saved successfully";
 
 btn.disabled=false;
 
 saving=false;
-
-resetForm();
 
 loadPatients();
 
@@ -313,7 +302,7 @@ loadPatients();
 
 });
 
-}
+});
 
 
 
