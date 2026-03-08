@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 
 <meta charset="UTF-8">
@@ -41,7 +40,7 @@ box-shadow:0 2px 10px rgba(0,0,0,0.1);
 margin-bottom:25px;
 }
 
-input,select{
+input,select,textarea{
 width:100%;
 padding:10px;
 margin:6px 0;
@@ -107,8 +106,12 @@ transition:width 0.4s;
 </div>
 
 <div class="menu">
+
 <a onclick="showSection('dashboard')">Dashboard</a>
 <a onclick="showSection('patients')">Patients</a>
+<a onclick="showSection('assessment')">Assessment</a>
+<a onclick="showSection('billing')">Billing</a>
+
 </div>
 
 </div>
@@ -117,6 +120,8 @@ transition:width 0.4s;
 
 <div class="container">
 
+
+<!-- DASHBOARD -->
 
 <div id="dashboard" class="section active">
 
@@ -133,8 +138,9 @@ Total Patients :
 
 
 
-<div id="patients" class="section">
+<!-- PATIENTS -->
 
+<div id="patients" class="section">
 
 <div class="card">
 
@@ -161,7 +167,6 @@ Total Patients :
 </form>
 
 </div>
-
 
 
 <div class="card">
@@ -191,6 +196,61 @@ Total Patients :
 
 </div>
 
+
+
+<!-- ASSESSMENT -->
+
+<div id="assessment" class="section">
+
+<div class="card">
+
+<h2>Wound Assessment</h2>
+
+<input id="a_mrn" placeholder="MRN">
+
+<input id="a_date" type="date">
+
+<input id="a_location" placeholder="Wound Location">
+
+<input id="a_size" placeholder="Wound Size">
+
+<input id="a_exudate" placeholder="Exudate">
+
+<input id="a_infection" placeholder="Infection">
+
+<textarea id="a_notes" placeholder="Notes"></textarea>
+
+<button onclick="saveAssessment()">Save Assessment</button>
+
+</div>
+
+</div>
+
+
+
+<!-- BILLING -->
+
+<div id="billing" class="section">
+
+<div class="card">
+
+<h2>Billing</h2>
+
+<input id="b_mrn" placeholder="MRN">
+
+<input id="b_date" type="date">
+
+<input id="b_procedure" placeholder="Procedure">
+
+<input id="b_cost" placeholder="Cost">
+
+<button onclick="saveBilling()">Save Billing</button>
+
+</div>
+
+</div>
+
+
 </div>
 
 
@@ -202,21 +262,14 @@ const API="https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9no
 
 
 function loadingStart(){
-
-document.getElementById("loadingBar").style.width="60%";
-
+document.getElementById("loadingBar").style.width="70%";
 }
 
-
-
 function loadingFinish(){
-
 document.getElementById("loadingBar").style.width="100%";
-
 setTimeout(()=>{
 document.getElementById("loadingBar").style.width="0%";
 },400);
-
 }
 
 
@@ -264,7 +317,6 @@ let tr=document.createElement("tr");
 row.forEach(cell=>{
 
 let td=document.createElement("td");
-
 td.innerText=cell;
 
 tr.appendChild(td);
@@ -301,6 +353,8 @@ let MRN=generateMRN(data.length-1);
 
 let patient={
 
+action:"patient",
+
 MRN:MRN,
 Name:document.getElementById("Name").value,
 Date_of_Birth:document.getElementById("Date_of_Birth").value,
@@ -328,6 +382,77 @@ loadPatients();
 });
 
 });
+
+
+
+function saveAssessment(){
+
+loadingStart();
+
+let data={
+
+action:"assessment",
+
+MRN:document.getElementById("a_mrn").value,
+Date:document.getElementById("a_date").value,
+Location:document.getElementById("a_location").value,
+Size:document.getElementById("a_size").value,
+Exudate:document.getElementById("a_exudate").value,
+Infection:document.getElementById("a_infection").value,
+Notes:document.getElementById("a_notes").value
+
+};
+
+fetch(API,{
+method:"POST",
+body:new URLSearchParams(data)
+})
+
+.then(res=>res.text())
+
+.then(()=>{
+
+alert("Assessment saved");
+
+loadingFinish();
+
+});
+
+}
+
+
+
+function saveBilling(){
+
+loadingStart();
+
+let data={
+
+action:"billing",
+
+MRN:document.getElementById("b_mrn").value,
+Date:document.getElementById("b_date").value,
+Procedure:document.getElementById("b_procedure").value,
+Cost:document.getElementById("b_cost").value
+
+};
+
+fetch(API,{
+method:"POST",
+body:new URLSearchParams(data)
+})
+
+.then(res=>res.text())
+
+.then(()=>{
+
+alert("Billing saved");
+
+loadingFinish();
+
+});
+
+}
 
 
 
