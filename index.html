@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <meta charset="UTF-8">
 <title>Wound Care EMR</title>
 
@@ -57,7 +59,7 @@ cursor:pointer;
 }
 
 button:disabled{
-background:#888;
+background:#999;
 }
 
 table{
@@ -79,10 +81,11 @@ display:none;
 display:block;
 }
 
-#loading{
-color:#1f3a5f;
-font-size:14px;
-margin-top:8px;
+#loadingBar{
+width:0%;
+height:4px;
+background:#1f3a5f;
+transition:width 0.4s;
 }
 
 </style>
@@ -91,6 +94,10 @@ margin-top:8px;
 
 
 <body>
+
+
+<div id="loadingBar"></div>
+
 
 <div class="navbar">
 
@@ -107,25 +114,27 @@ margin-top:8px;
 </div>
 
 
+
 <div class="container">
 
-
-<!-- DASHBOARD -->
 
 <div id="dashboard" class="section active">
 
 <div class="card">
+
 <h2>Dashboard</h2>
-<p>Total Patients: <span id="totalPatients">0</span></p>
-</div>
+
+Total Patients :
+<b id="totalPatients">0</b>
 
 </div>
 
+</div>
 
 
-<!-- PATIENTS -->
 
 <div id="patients" class="section">
+
 
 <div class="card">
 
@@ -147,13 +156,12 @@ margin-top:8px;
 
 <input id="Phone" placeholder="Phone">
 
-<button id="saveBtn" type="submit">Save Patient</button>
-
-<div id="loading"></div>
+<button id="saveBtn">Save Patient</button>
 
 </form>
 
 </div>
+
 
 
 <div class="card">
@@ -163,6 +171,7 @@ margin-top:8px;
 <table id="patientTable">
 
 <thead>
+
 <tr>
 <th>MRN</th>
 <th>Name</th>
@@ -171,6 +180,7 @@ margin-top:8px;
 <th>Address</th>
 <th>Phone</th>
 </tr>
+
 </thead>
 
 <tbody></tbody>
@@ -184,11 +194,30 @@ margin-top:8px;
 </div>
 
 
+
 <script>
 
-const API_URL="https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9norBOzvE8etwGkhfIjvcuaHtuGLGjMOrdaFFuhEQ/exec";
+const API="https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9norBOzvE8etwGkhfIjvcuaHtuGLGjMOrdaFFuhEQ/exec";
 
-let saving=false;
+
+
+function loadingStart(){
+
+document.getElementById("loadingBar").style.width="60%";
+
+}
+
+
+
+function loadingFinish(){
+
+document.getElementById("loadingBar").style.width="100%";
+
+setTimeout(()=>{
+document.getElementById("loadingBar").style.width="0%";
+},400);
+
+}
 
 
 
@@ -206,9 +235,9 @@ document.getElementById(id).classList.add("active");
 
 function generateMRN(total){
 
-let number = total+1;
+let num=total+1;
 
-return "GV"+number.toString().padStart(3,"0");
+return "GV"+num.toString().padStart(3,"0");
 
 }
 
@@ -216,8 +245,12 @@ return "GV"+number.toString().padStart(3,"0");
 
 function loadPatients(){
 
-fetch(API_URL)
+loadingStart();
+
+fetch(API)
+
 .then(res=>res.json())
+
 .then(data=>{
 
 let table=document.querySelector("#patientTable tbody");
@@ -231,6 +264,7 @@ let tr=document.createElement("tr");
 row.forEach(cell=>{
 
 let td=document.createElement("td");
+
 td.innerText=cell;
 
 tr.appendChild(td);
@@ -243,6 +277,8 @@ table.appendChild(tr);
 
 document.getElementById("totalPatients").innerText=data.length-1;
 
+loadingFinish();
+
 });
 
 }
@@ -253,25 +289,19 @@ document.getElementById("patientForm").addEventListener("submit",function(e){
 
 e.preventDefault();
 
-if(saving) return;
+loadingStart();
 
-saving=true;
+fetch(API)
 
-let btn=document.getElementById("saveBtn");
-let loading=document.getElementById("loading");
-
-btn.disabled=true;
-loading.innerText="Saving patient data...";
-
-fetch(API_URL)
 .then(res=>res.json())
+
 .then(data=>{
 
-let mrn=generateMRN(data.length-1);
+let MRN=generateMRN(data.length-1);
 
 let patient={
 
-MRN:mrn,
+MRN:MRN,
 Name:document.getElementById("Name").value,
 Date_of_Birth:document.getElementById("Date_of_Birth").value,
 Gender:document.getElementById("Gender").value,
@@ -280,21 +310,16 @@ Phone:document.getElementById("Phone").value
 
 };
 
-
-fetch(API_URL,{
+fetch(API,{
 method:"POST",
 body:new URLSearchParams(patient)
 })
+
 .then(res=>res.text())
+
 .then(()=>{
 
 document.getElementById("patientForm").reset();
-
-loading.innerText="Patient saved successfully";
-
-btn.disabled=false;
-
-saving=false;
 
 loadPatients();
 
@@ -309,6 +334,8 @@ loadPatients();
 window.onload=function(){
 
 loadPatients();
+
+setInterval(loadPatients,5000);
 
 }
 
