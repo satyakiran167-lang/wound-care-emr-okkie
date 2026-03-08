@@ -58,11 +58,6 @@ cursor:pointer;
 
 button:disabled{
 background:#999;
-cursor:not-allowed;
-}
-
-button:hover{
-background:#2f5d8a;
 }
 
 table{
@@ -86,8 +81,13 @@ display:block;
 
 .status{
 margin-top:10px;
-color:#1f3a5f;
 font-size:14px;
+color:#1f3a5f;
+}
+
+.loader{
+display:none;
+margin-top:10px;
 }
 
 </style>
@@ -123,7 +123,6 @@ font-size:14px;
 
 </div>
 
-
 <!-- PATIENT PAGE -->
 
 <div id="patients" class="section">
@@ -148,10 +147,11 @@ font-size:14px;
 
 <button id="saveBtn" onclick="savePatient()">Save Patient</button>
 
+<div class="loader" id="loader">Saving patient data...</div>
+
 <div class="status" id="statusMsg"></div>
 
 </div>
-
 
 <div class="card">
 
@@ -193,6 +193,17 @@ document.getElementById(id).classList.add("active");
 }
 
 
+
+function generateMRN(total){
+
+let number = total;
+
+return "GV"+number.toString().padStart(3,'0');
+
+}
+
+
+
 function loadPatients(){
 
 fetch(API_URL)
@@ -223,22 +234,16 @@ document.getElementById("totalPatients").innerText=data.length-1;
 }
 
 
-function generateMRN(total){
-
-let number=total;
-
-return "GV"+number.toString().padStart(3,'0');
-
-}
-
 
 function savePatient(){
 
 let btn=document.getElementById("saveBtn");
+let loader=document.getElementById("loader");
 let status=document.getElementById("statusMsg");
 
 btn.disabled=true;
-status.innerText="Saving patient data...";
+loader.style.display="block";
+status.innerText="";
 
 fetch(API_URL)
 .then(res=>res.json())
@@ -262,6 +267,7 @@ body:new URLSearchParams(patient)
 .then(res=>res.text())
 .then(()=>{
 
+loader.style.display="none";
 status.innerText="Patient saved successfully";
 
 document.getElementById("Name").value="";
