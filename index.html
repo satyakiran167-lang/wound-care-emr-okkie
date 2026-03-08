@@ -112,6 +112,7 @@ display:block;
 
 </div>
 
+
 <!-- PATIENT PAGE -->
 
 <div id="patients" class="section">
@@ -121,8 +122,6 @@ display:block;
 <h2>Add Patient</h2>
 
 <form id="patientForm">
-
-<input id="MRN" placeholder="MRN" required>
 
 <input id="Name" placeholder="Patient Name" required>
 
@@ -177,12 +176,15 @@ display:block;
 
 const API_URL = "https://script.google.com/macros/s/AKfycbx_Vcuo_p7fSYCrBIMkztQgYtk9norBOzvE8etwGkhfIjvcuaHtuGLGjMOrdaFFuhEQ/exec";
 
+
 function showSection(id){
 document.querySelectorAll(".section").forEach(section=>{
 section.classList.remove("active");
 });
 document.getElementById(id).classList.add("active");
 }
+
+
 
 function loadPatients(){
 
@@ -213,12 +215,20 @@ document.getElementById("totalPatients").innerText=data.length-1;
 
 }
 
+
+
 document.getElementById("patientForm").addEventListener("submit",function(e){
 
 e.preventDefault();
 
-var data={
-MRN:document.getElementById("MRN").value,
+fetch(API_URL)
+.then(res=>res.json())
+.then(data=>{
+
+let nextMRN = data.length;
+
+var patientData={
+MRN:nextMRN,
 Name:document.getElementById("Name").value,
 Date_of_Birth:document.getElementById("Date_of_Birth").value,
 Gender:document.getElementById("Gender").value,
@@ -228,7 +238,7 @@ Phone:document.getElementById("Phone").value
 
 fetch(API_URL,{
 method:"POST",
-body:new URLSearchParams(data)
+body:new URLSearchParams(patientData)
 })
 .then(res=>res.text())
 .then(()=>{
@@ -244,6 +254,9 @@ showSection("patients");
 });
 
 });
+
+});
+
 
 loadPatients();
 
